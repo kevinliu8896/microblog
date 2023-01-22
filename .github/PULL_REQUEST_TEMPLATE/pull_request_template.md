@@ -1,4 +1,4 @@
-# Issue: [Replace me the [issue](https://github.com/JoshuaPicchioni/microblog/issues)]
+# Issue: [Replace me with the [issue](https://github.com/JoshuaPicchioni/microblog/issues)]
 # Changes:
 * [List of changes]
 ---
