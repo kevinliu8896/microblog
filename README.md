@@ -16,4 +16,4 @@ This is an example application featured in my [Flask Mega-Tutorial](https://blog
 1. Commit changes and push your branch to github
 1. Create a PR request (using the template)
 1. Ask others in the group for a PR review (send them the link)
-1. Enjoy! :(
+1. Enjoy! :)
