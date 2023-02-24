@@ -36,8 +36,8 @@
                     <button id="dislike-btn-{{ post.id }}" type="button" class="btn btn-secondary btn-sm" onclick="dislikePost('{{ post.id }}')">
                         <i class="far fa-thumbs-down"></i> Dislike
                     </button>
-                    <button type="button" class="btn btn-warning btn-sm" onclick="laughPost('{{ post.id }}')">
-                        <i class="far fa-laugh"></i> Laugh
+                    <button id="laugh-btn-{{ post.id }}" type="button" class="btn btn-secondary btn-sm" onclick="laughPost('{{ post.id }}')">
+                        <i class="far fa-thumbs-down"></i> Laugh
                     </button>
                 </div>
             </div>
@@ -69,6 +69,19 @@
                         dislikeBtn.classList.add("btn-secondary");
                     }
                 }
+
+                function laughPost(postId) {
+                    var laughBtn = document.getElementById("laugh-btn-" + postId);
+                    if (laughBtn.classList.contains("btn-secondary")) {
+                        laughBtn.classList.remove("btn-secondary");
+                        laughBtn.classList.add("btn-warning");
+                    } else {
+                        laughBtn.classList.remove("btn-warning");
+                        laughBtn.classList.add("btn-secondary");
+                    }
+                }
+
+                
             </script>
         </td>
     </tr>
