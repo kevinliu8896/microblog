@@ -88,6 +88,24 @@ followers = db.Table(
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
 
+likedPosts = db.Table(
+    'likedPosts',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('post_id', db.Integer, db.ForeignKey('post.id'))
+)
+
+dislikedPosts = db.Table(
+    'dislikedPosts',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('post_id', db.Integer, db.ForeignKey('post.id'))
+)
+
+laughedPosts = db.Table(
+    'laughedPosts',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('post_id', db.Integer, db.ForeignKey('post.id'))
+)
+
 
 class User(UserMixin, PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -243,10 +261,79 @@ def load_user(id):
 class Post(SearchableMixin, db.Model):
     __searchable__ = ['body']
     id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.String(140))
+    body = db.Column(db.String(160))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     language = db.Column(db.String(5))
+    likes = db.Column(db.Integer, default=0)
+    dislikes = db.Column(db.Integer, default=0)
+    laughs = db.Column(db.Integer, default=0)
+    likedBy = db.relationship('User', secondary=likedPosts, backref=db.backref('likedPosts', lazy='dynamic'), lazy='dynamic')
+    dislikedBy = db.relationship('User', secondary=dislikedPosts, backref=db.backref('dislikedPosts', lazy='dynamic'), lazy='dynamic')
+    laughedBy = db.relationship('User', secondary=laughedPosts, backref=db.backref('laughedPosts', lazy='dynamic'), lazy='dynamic')
+
+    def liked_by(self, user):
+        return self.likedBy.filter(likedPosts.c.user_id == user.id).count() > 0
+
+    def like_by(self, user):
+        if not self.liked_by(user):
+            self.likedBy.append(user)
+            self.likes = (1 if not self.likes else self.likes + 1)
+            db.session.commit()
+            return self.likes
+        else:
+            return "Already Liked"
+
+    def unlike_by(self, user):
+        if self.liked_by(user):
+            self.likedBy.remove(user)
+            self.likes = (0 if not self.likes else self.likes - 1)
+            db.session.commit()
+            return self.likes
+        else:
+            return "Already Unliked"
+
+    def disliked_by(self, user):
+        return self.dislikedBy.filter(dislikedPosts.c.user_id == user.id).count() > 0
+
+    def dislike_by(self, user):
+        if not self.disliked_by(user):
+            self.dislikedBy.append(user)
+            self.dislikes = (1 if not self.dislikes else self.dislikes + 1)
+            db.session.commit()
+            return self.dislikes
+        else:
+            return "Already Disliked"
+
+    def undislike_by(self, user):
+        if self.disliked_by(user):
+            self.dislikedBy.remove(user)
+            self.dislikes = (0 if not self.dislikes else self.dislikes - 1)
+            db.session.commit()
+            return self.dislikes
+        else:
+            return "Already Undisliked"
+
+    def laughed_by(self, user):
+        return self.laughedBy.filter(laughedPosts.c.user_id == user.id).count() > 0
+
+    def laugh_by(self, user):
+        if not self.laughed_by(user):
+            self.laughedBy.append(user)
+            self.laughs = (1 if not self.laughs else self.laughs + 1)
+            db.session.commit()
+            return self.laughs
+        else:
+            return "Already Laughed"
+
+    def unlaugh_by(self, user):
+        if self.laughed_by(user):
+            self.laughedBy.remove(user)
+            self.laughs = (0 if not self.laughs else self.laughs - 1)
+            db.session.commit()
+            return self.laughs
+        else:
+            return "Already Unlaughed"
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
