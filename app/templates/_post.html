@@ -30,14 +30,14 @@
             <br><br>
             <div class="text-right">
                 <div class="btn-group">
-                    <button id="like-btn-{{ post.id }}" type="button" class="btn btn-secondary btn-sm" onclick="likePost('{{ post.id }}', {{post.likes or 0}})">
-                        <i class="far fa-thumbs-up"></i> Like: <span id="like-count-{{ post.id }}">{{ post.likes or 0 }}</span>
+                    <button id="like-btn-{{ post.id }}" type="button" class="btn btn-secondary btn-sm" onclick="likePost('{{ post.id }}', {{post.likes or 0}})" page={{page}}>
+                        <i class="far fa-thumbs-up"></i> Like: <span id="like-count-{{ post.id }}" page={{page}}>{{ post.likes or 0 }}</span>
                     </button>
-                    <button id="dislike-btn-{{ post.id }}" type="button" class="btn btn-secondary btn-sm" onclick="dislikePost('{{ post.id }}', {{post.dislikes or 0}})">
-                        <i class="far fa-thumbs-down"></i> Dislike: <span id="dislike-count-{{ post.id }}">{{ post.dislikes or 0 }}</span>
+                    <button id="dislike-btn-{{ post.id }}" type="button" class="btn btn-secondary btn-sm" onclick="dislikePost('{{ post.id }}', {{post.dislikes or 0}})" page={{page}}>
+                        <i class="far fa-thumbs-down"></i> Dislike: <span id="dislike-count-{{ post.id }}" page={{page}}>{{ post.dislikes or 0 }}</span>
                     </button>
-                    <button id="laugh-btn-{{ post.id }}" type="button" class="btn btn-secondary btn-sm" onclick="laughPost('{{ post.id }}', {{post.laughs or 0}})">
-                        <i class="far fa-thumbs-down"></i> Laugh: <span id="laugh-count-{{ post.id }}">{{ post.laughs or 0 }}</span>
+                    <button id="laugh-btn-{{ post.id }}" type="button" class="btn btn-secondary btn-sm" onclick="laughPost('{{ post.id }}', {{post.laughs or 0}})" page={{page}}>
+                        <i class="far fa-thumbs-down"></i> Laugh: <span id="laugh-count-{{ post.id }}" page={{page}}>{{ post.laughs or 0 }}</span>
                     </button>
                 </div>
             </div>
@@ -47,6 +47,7 @@
                     var likeBtn = document.getElementById("like-btn-{{ post.id }}");
                     var dislikeBtn = document.getElementById("dislike-btn-{{ post.id }}");
                     var laughBtn = document.getElementById("laugh-btn-{{ post.id }}");
+
                     {% if current_user.is_authenticated %}
                         // loop through posts and check if the post was liked by the user
                         {% if post.liked_by(current_user) %}
@@ -78,7 +79,8 @@
                     request.send(JSON.stringify({
                         "postId": postId,
                         "likes": likes,
-                        "increasing": increasing
+                        "increasing": increasing,
+                        "page": parseInt(likeCnt.getAttribute("page"))
                     }));
                     // parse response
                     request.onload = function() {
@@ -107,7 +109,8 @@
                     request.send(JSON.stringify({
                         "postId": postId,
                         "laughs": laughs,
-                        "increasing": increasing
+                        "increasing": increasing,
+                        "page": parseInt(laughCnt.getAttribute("page"))
                     }));
                     // parse response
                     request.onload = function() {
@@ -137,7 +140,8 @@
                     request.send(JSON.stringify({
                         "postId": postId,
                         "dislikes": dislikes,
-                        "increasing": increasing
+                        "increasing": increasing,
+                        "page": parseInt(dislikeCnt.getAttribute("page"))
                     }));
                     // parse response
                     request.onload = function() {

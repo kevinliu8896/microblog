@@ -33,15 +33,15 @@ def updateLikes():
         # expecting the data to be in the form:
         # {
         #     "postId": postId,
-        #     "likes": likes
+        #     "likes": likes,
+        #     "page": page
         # }
 
         # getting the postId and likes
         postId = data['postId']
         increasing = data['increasing']
+        page = data['page'] or 1
 
-        # updating the respective post witht the new likes
-        page = request.args.get('page', 1, type=int)
         # search all posts
         posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page=page, per_page=current_app.config['POSTS_PER_PAGE'],
@@ -73,6 +73,7 @@ def updateDislikes():
         # {
         #     "postId": postId,
         #     "dislikes": dislikes
+        #     "page": page
         # }
 
         # getting the postId and likes
@@ -80,7 +81,7 @@ def updateDislikes():
         increasing = data['increasing']
 
         # updating the respective post witht the new likes
-        page = request.args.get('page', 1, type=int)
+        page = data['page'] or 1
         # search all posts
         posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page=page, per_page=current_app.config['POSTS_PER_PAGE'],
@@ -113,14 +114,14 @@ def updateLaughs():
         # {
         #     "postId": postId,
         #     "laughs": laughs
+        #     "page": page
         # }
 
         # getting the postId and likes
         postId = data['postId']
         increasing = data['increasing']
 
-        # updating the respective post witht the new likes
-        page = request.args.get('page', 1, type=int)
+        page = data['page'] or 1
         # search all posts
         posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page=page, per_page=current_app.config['POSTS_PER_PAGE'],
@@ -165,7 +166,7 @@ def index():
         if posts.has_prev else None
     return render_template('index.html', title=_('Home'), form=form,
                            posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
+                           prev_url=prev_url, page=page)
 
 
 @bp.route('/explore')
@@ -181,7 +182,7 @@ def explore():
         if posts.has_prev else None
     return render_template('index.html', title=_('Explore'),
                            posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
+                           prev_url=prev_url, page=page)
 
 
 @bp.route('/user/<username>')
