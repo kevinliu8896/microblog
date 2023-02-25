@@ -21,6 +21,124 @@ def before_request():
     g.locale = str(get_locale())
 
 
+@bp.route("/updatelikes", methods=['POST'])
+@login_required
+def updateLikes():
+    content_type = request.headers['Content-Type']
+    if (content_type == 'application/json'):
+        data = request.get_json()
+        print(data)
+
+        # updating the likes
+        # expecting the data to be in the form:
+        # {
+        #     "postId": postId,
+        #     "likes": likes
+        # }
+
+        # getting the postId and likes
+        postId = data['postId']
+        increasing = data['increasing']
+
+        # updating the respective post witht the new likes
+        page = request.args.get('page', 1, type=int)
+        # search all posts
+        posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page=page, per_page=current_app.config['POSTS_PER_PAGE'],
+        error_out=False)
+
+        matches = [(idx, post) for idx, post in enumerate(posts.items) if post.id == int(postId)]
+        for idx, post in matches:
+            # check if current user has already liked the post
+            # and if so make sure the new likes is less than the old likes
+            if increasing:
+                return jsonify({"likes": post.like_by(current_user)})
+            else:
+                return jsonify({"likes": post.unlike_by(current_user)})
+
+        return jsonify(data)
+    else:
+        return jsonify({'error': 'Invalid content type'})
+
+@bp.route('/updatedislikes', methods=['POST'])
+@login_required
+def updateDislikes():
+    content_type = request.headers['Content-Type']
+    if (content_type == 'application/json'):
+        data = request.get_json()
+        print(data)
+
+        # updating the dislikes
+        # expecting the data to be in the form:
+        # {
+        #     "postId": postId,
+        #     "dislikes": dislikes
+        # }
+
+        # getting the postId and likes
+        postId = data['postId']
+        increasing = data['increasing']
+
+        # updating the respective post witht the new likes
+        page = request.args.get('page', 1, type=int)
+        # search all posts
+        posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page=page, per_page=current_app.config['POSTS_PER_PAGE'],
+        error_out=False)
+
+        matches = [(idx, post) for idx, post in enumerate(posts.items) if post.id == int(postId)]
+        for idx, post in matches:
+            # check if current user has already liked the post
+            # and if so make sure the new likes is less than the old likes
+            if increasing:
+                return jsonify({"dislikes": post.dislike_by(current_user)})
+            else:
+                return jsonify({"dislikes": post.undislike_by(current_user)})
+
+        return jsonify(data)
+    else:
+        return jsonify({'error': 'Invalid content type'})
+
+# update laughs
+@bp.route('/updatelaughs', methods=['POST'])
+@login_required
+def updateLaughs():
+    content_type = request.headers['Content-Type']
+    if (content_type == 'application/json'):
+        data = request.get_json()
+        print(data)
+
+        # updating the laughs
+        # expecting the data to be in the form:
+        # {
+        #     "postId": postId,
+        #     "laughs": laughs
+        # }
+
+        # getting the postId and likes
+        postId = data['postId']
+        increasing = data['increasing']
+
+        # updating the respective post witht the new likes
+        page = request.args.get('page', 1, type=int)
+        # search all posts
+        posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page=page, per_page=current_app.config['POSTS_PER_PAGE'],
+        error_out=False)
+
+        matches = [(idx, post) for idx, post in enumerate(posts.items) if post.id == int(postId)]
+        for idx, post in matches:
+            # check if current user has already liked the post
+            # and if so make sure the new likes is less than the old likes
+            if increasing:
+                return jsonify({"laughs": post.laugh_by(current_user)})
+            else:
+                return jsonify({"laughs": post.unlaugh_by(current_user)})
+
+        return jsonify(data)
+    else:
+        return jsonify({'error': 'Invalid content type'})
+
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
 @login_required
