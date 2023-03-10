@@ -105,11 +105,6 @@ laughedPosts = db.Table(
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('post_id', db.Integer, db.ForeignKey('post.id'))
 )
-archivedPosts = db.Table(
-    'archivedPosts',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('post_id', db.Integer, db.ForeignKey('post.id'))
-)
 
 
 class User(UserMixin, PaginatedAPIMixin, db.Model):
