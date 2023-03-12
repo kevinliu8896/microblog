@@ -223,3 +223,4 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.find_element(By.CSS_SELECTOR, ".next span").click()
     self.driver.find_element(By.LINK_TEXT, "← Newer posts").click()
   
+ 
