@@ -12,7 +12,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 class TestLikeDislikeLaughButtonTests():
   def setup_method(self, method):
-    self.driver = webdriver.Chrome(chrome_options=Options().add_argument('--headless'))
+    self.driver = webdriver.Chrome()
     self.vars = {}
   
   def teardown_method(self, method):
