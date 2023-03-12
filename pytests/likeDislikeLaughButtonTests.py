@@ -69,6 +69,7 @@ class TestLikeDislikeLaughButtonTests():
   
   def test_2MakePostTest(self):
 
+
     self.driver.get("http://127.0.0.1:5001/")
 
     self.driver.set_window_size(1281, 1097)
@@ -77,6 +78,7 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.find_element(By.ID, "submit").click()
   
   def test_3LikeDislikeTest(self):
+
 
     self.driver.get("http://127.0.0.1:5001/")
 
@@ -113,7 +115,9 @@ class TestLikeDislikeLaughButtonTests():
   
   def test_4LaughTest(self):
 
+
     self.driver.get("http://127.0.0.1:5001/")
+
 
     self.driver.set_window_size(1281, 1097)
     self.driver.find_element(By.ID, "laugh-btn-55").click()
