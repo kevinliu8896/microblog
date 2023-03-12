@@ -20,7 +20,7 @@ class TestLikeDislikeLaughButtonTests():
   
   def test_1CreateUserTest(self):
     self.driver.get("http://127.0.0.1:5000/auth/login?next=%2F")
-    self.driver.set_window_size(1205, 1077)
+    self.driver.set_window_size(1059, 1097)
     self.driver.find_element(By.ID, "username").send_keys("admin-user")
     self.driver.find_element(By.ID, "password").send_keys("ABC123")
     self.driver.find_element(By.LINK_TEXT, "Click to Register!").click()
@@ -29,10 +29,18 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.find_element(By.ID, "email").click()
     self.driver.find_element(By.ID, "email").send_keys("themanjamesgreen@gmail.com")
     self.driver.find_element(By.ID, "password").click()
-    self.driver.find_element(By.ID, "password").click()
     self.driver.find_element(By.ID, "password").send_keys("Test1238")
     self.driver.find_element(By.ID, "password2").click()
     self.driver.find_element(By.ID, "password2").send_keys("Test1238")
+    self.driver.find_element(By.ID, "submit").click()
+    self.driver.find_element(By.LINK_TEXT, "Logout").click()
+    self.driver.find_element(By.ID, "username").send_keys("admin-user")
+    self.driver.find_element(By.ID, "password").send_keys("ABC123")
+    self.driver.find_element(By.ID, "username").click()
+    self.driver.find_element(By.ID, "username").send_keys("Joshua")
+    self.driver.find_element(By.CSS_SELECTOR, "body").click()
+    self.driver.find_element(By.ID, "password").send_keys("Test1238")
+    self.driver.find_element(By.ID, "remember_me").click()
     self.driver.find_element(By.ID, "submit").click()
   
   def test_2MakePostTest(self):
@@ -215,3 +223,4 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.find_element(By.CSS_SELECTOR, ".next span").click()
     self.driver.find_element(By.LINK_TEXT, "← Newer posts").click()
   
+ 
