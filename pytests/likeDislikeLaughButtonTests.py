@@ -30,7 +30,9 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.quit()
   
   def test_1CreateUserTest(self):
+
     self.driver.get("http://www.google.com/auth/login?next=%2F")
+
     self.driver.set_window_size(1281, 1097)
     self.driver.find_element(By.ID, "username").send_keys("admin-user")
     self.driver.find_element(By.ID, "password").send_keys("ABC123")
@@ -66,14 +68,18 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.find_element(By.ID, "submit").click()
   
   def test_2MakePostTest(self):
+
     self.driver.get("http://www.google.com/")
+
     self.driver.set_window_size(1281, 1097)
     self.driver.find_element(By.ID, "post").click()
     self.driver.find_element(By.ID, "post").send_keys("Hello from Selenium Webdriver!")
     self.driver.find_element(By.ID, "submit").click()
   
   def test_3LikeDislikeTest(self):
+
     self.driver.get("http://www.google.com/")
+
     self.driver.set_window_size(1281, 1097)
     self.driver.find_element(By.ID, "like-count-55").click()
     self.driver.find_element(By.ID, "dislike-btn-55").click()
@@ -106,7 +112,9 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.find_element(By.ID, "dislike-btn-55").click()
   
   def test_4LaughTest(self):
+
     self.driver.get("http://www.google.com/")
+
     self.driver.set_window_size(1281, 1097)
     self.driver.find_element(By.ID, "laugh-btn-55").click()
     self.driver.find_element(By.ID, "laugh-btn-55").click()
