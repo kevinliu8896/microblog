@@ -30,6 +30,23 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.quit()
   
   
+  def test_1CreateUserTest(self):
+    self.driver.get("http://127.0.0.1:5000/auth/login?next=%2F")
+    self.driver.set_window_size(1205, 1077)
+    self.driver.find_element(By.ID, "username").send_keys("admin-user")
+    self.driver.find_element(By.ID, "password").send_keys("ABC123")
+    self.driver.find_element(By.LINK_TEXT, "Click to Register!").click()
+    self.driver.find_element(By.ID, "username").click()
+    self.driver.find_element(By.ID, "username").send_keys("Joshua")
+    self.driver.find_element(By.ID, "email").click()
+    self.driver.find_element(By.ID, "email").send_keys("themanjamesgreen@gmail.com")
+    self.driver.find_element(By.ID, "password").click()
+    self.driver.find_element(By.ID, "password").click()
+    self.driver.find_element(By.ID, "password").send_keys("Test1238")
+    self.driver.find_element(By.ID, "password2").click()
+    self.driver.find_element(By.ID, "password2").send_keys("Test1238")
+    self.driver.find_element(By.ID, "submit").click()
+  
   def test_2MakePostTest(self):
     self.driver.get("http://127.0.0.1:5000/")
     self.driver.set_window_size(1205, 1077)
@@ -200,4 +217,13 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.find_element(By.ID, "post").click()
     self.driver.find_element(By.ID, "post").send_keys("Test")
     self.driver.find_element(By.ID, "submit").click()
+    self.driver.find_element(By.ID, "laugh-btn-4").click()
+    self.driver.find_element(By.LINK_TEXT, "Older posts →").click()
+    self.driver.find_element(By.ID, "like-btn-3").click()
+    self.driver.find_element(By.ID, "like-btn-2").click()
+    self.driver.find_element(By.ID, "laugh-btn-1").click()
+    self.driver.find_element(By.LINK_TEXT, "← Newer posts").click()
+    self.driver.find_element(By.ID, "like-btn-28").click()
+    self.driver.find_element(By.CSS_SELECTOR, ".next span").click()
+    self.driver.find_element(By.LINK_TEXT, "← Newer posts").click()
   
