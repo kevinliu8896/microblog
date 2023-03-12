@@ -31,7 +31,7 @@ class TestLikeDislikeLaughButtonTests():
   
   def test_1CreateUserTest(self):
 
-    self.driver.get("http://www.google.com/auth/login?next=%2F")
+    self.driver.get("http://127.0.0.1:5001/auth/login?next=%2F")
 
     self.driver.set_window_size(1281, 1097)
     self.driver.find_element(By.ID, "username").send_keys("admin-user")
@@ -69,7 +69,7 @@ class TestLikeDislikeLaughButtonTests():
   
   def test_2MakePostTest(self):
 
-    self.driver.get("http://www.google.com/")
+    self.driver.get("http://127.0.0.1:5001/")
 
     self.driver.set_window_size(1281, 1097)
     self.driver.find_element(By.ID, "post").click()
@@ -78,7 +78,7 @@ class TestLikeDislikeLaughButtonTests():
   
   def test_3LikeDislikeTest(self):
 
-    self.driver.get("http://www.google.com/")
+    self.driver.get("http://127.0.0.1:5001/")
 
     self.driver.set_window_size(1281, 1097)
     self.driver.find_element(By.ID, "like-count-55").click()
@@ -113,7 +113,7 @@ class TestLikeDislikeLaughButtonTests():
   
   def test_4LaughTest(self):
 
-    self.driver.get("http://www.google.com/")
+    self.driver.get("http://127.0.0.1:5001/")
 
     self.driver.set_window_size(1281, 1097)
     self.driver.find_element(By.ID, "laugh-btn-55").click()
