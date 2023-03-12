@@ -145,3 +145,4 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.find_element(By.LINK_TEXT, "Logout").click()
     self.driver.close()
   
+ 
