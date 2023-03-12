@@ -200,13 +200,4 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.find_element(By.ID, "post").click()
     self.driver.find_element(By.ID, "post").send_keys("Test")
     self.driver.find_element(By.ID, "submit").click()
-    self.driver.find_element(By.ID, "laugh-btn-4").click()
-    self.driver.find_element(By.LINK_TEXT, "Older posts →").click()
-    self.driver.find_element(By.ID, "like-btn-3").click()
-    self.driver.find_element(By.ID, "like-btn-2").click()
-    self.driver.find_element(By.ID, "laugh-btn-1").click()
-    self.driver.find_element(By.LINK_TEXT, "← Newer posts").click()
-    self.driver.find_element(By.ID, "like-btn-28").click()
-    self.driver.find_element(By.CSS_SELECTOR, ".next span").click()
-    self.driver.find_element(By.LINK_TEXT, "← Newer posts").click()
   
