@@ -165,6 +165,13 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
                 followers.c.follower_id == self.id)
         own = Post.query.filter_by(user_id=self.id)
         return followed.union(own).order_by(Post.timestamp.desc())
+    
+
+    #check if this works somehow? followed posts is only used in tests.py for unit testing.
+    def liked_posts(self):
+        liked = likedPosts.query.order_by(likedPosts.timestamp.desc()).all()
+        own = Post.query.filter_by(user_id = self.id)
+        return liked.union(own).order_by(Post.timestamp.desc())
 
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
