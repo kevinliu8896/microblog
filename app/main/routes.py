@@ -184,13 +184,13 @@ def explore():
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url, page=page)
 
-#favourited
-@bp.route('/favourited')
+#archive
+@bp.route('/archive')
 @login_required
 def favourited():
     user = current_user
     posts = user.liked_posts.all()
-    return render_template('favourited.html', posts=posts)
+    return render_template('archive.html', posts=posts)
 
 @bp.route('/user/<username>')
 @login_required
