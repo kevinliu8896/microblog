@@ -120,13 +120,6 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
     liked_posts = db.relationship('Post', secondary=likedPosts,
                             backref=db.backref('likers', lazy='dynamic'),
                             lazy='dynamic')
-    #liked posts relationship?
-   # liked = db.relationship(
-    #    'User', secondary = posts,
-    #      primaryjoin = (likedPosts.c.user_id == id),
-    #        secondaryjoin = (likedPosts.c.post_id),
-    #            backref=db.backref('post_id',lazy ='dynamic'), lazy = 'dynamic')
-    #----------------------------------------------------------------------------
     followed = db.relationship(
         'User', secondary=followers,
         primaryjoin=(followers.c.follower_id == id),
@@ -175,7 +168,6 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
                 followers.c.follower_id == self.id)
         own = Post.query.filter_by(user_id=self.id)
         return followed.union(own).order_by(Post.timestamp.desc())
-    
 
     #check if this works somehow? followed posts is only used in tests.py for unit testing.
     #def liked_posts(self):
