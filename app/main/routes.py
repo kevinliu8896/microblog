@@ -187,7 +187,7 @@ def explore():
 #archive
 @bp.route('/archive')
 @login_required
-def favourited():
+def archive():
     user = current_user
     posts = user.liked_posts.all()
     return render_template('archive.html', posts=posts)
