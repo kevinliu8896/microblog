@@ -7,7 +7,7 @@ from app.auth import bp
 from app.auth.forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm, LoginAuthentication
 from app.models import User
-from app.auth.email import send_password_reset_email
+from app.auth.email import send_password_reset_email, send_verification_code
 
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -20,11 +20,31 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash(_('Invalid username or password'))
             return redirect(url_for('auth.login'))
-        code = "1234"
-        session["code"] = code 
-        session["user"] = user
-        return redirect(url_for('auth.login_authentication'))
+        if user.authentication == True:
+            code = "1234"
+            session["code"] = code 
+            session["user"] = form.username.data
+            session["remember_me"] = form.remember_me.data
+            flash(_('Check your email for the verification code'))
+            send_verification_code(user, code)
+            return redirect(url_for('auth.login_authentication'))
+        login_user(user, remember = session["remember_me"])
+        next_page = request.args.get('next')
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('main.index')
+        return redirect(next_page)  
     return render_template('auth/login.html', title=_('Sign In'), form=form)
+
+@bp.route('/manage_authentication', methods=['POST'])
+def manage_authentication():
+    authentication = request.form['authenticate']
+    user = User.query.filter_by(username = session["user"] ).first()
+    if authentication == True:
+        user.authentication = True
+    else:
+        user.authentication = False
+    return redirect(url_for('main.index'))
+
 
 @bp.route('/login_authentication', methods=['GET', 'POST'])
 def login_authentication():
@@ -38,8 +58,8 @@ def login_authentication():
         if session["code"] != code:
             flash(_('Invalid username or password'))
             return redirect(url_for('auth.login_authentication'))
-        user = session["user"]
-        login_user(user, remember=form.remember_me.data)
+        user = User.query.filter_by(username = session["user"] ).first()
+        login_user(user, remember = session["remember_me"])
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('main.index')

@@ -13,4 +13,11 @@ def send_password_reset_email(user):
                html_body=render_template('email/reset_password.html',
                                          user=user, token=token))
 
-#def send_verification_code(user, code):
+def send_verification_code(user, code):
+    send_email(_('[Microblog] Verification Code'),
+               sender=current_app.config['ADMINS'][0],
+               recipients=[user.email],
+               text_body=render_template('email/verification_code.txt',
+                                         user=user, code=code),
+               html_body=render_template('email/verification_code.html',
+                                         user=user, code=code))
