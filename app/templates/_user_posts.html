@@ -1,0 +1,224 @@
+<table class="table table-hover">
+    <tr>
+        <td width="70px">
+            <a href="{{ url_for('main.user', username=post.author.username) }}">
+                <img src="{{ post.author.avatar(70) }}" />
+            </a>
+        </td>
+        <td>
+            {% set user_link %}
+                <span class="user_popup">
+                    <a href="{{ url_for('main.user', username=post.author.username) }}">
+                        {{ post.author.username }}
+                    </a>
+                </span>
+            {% endset %}
+            {{ _('%(username)s said %(when)s',
+                username=user_link, when=moment(post.timestamp).fromNow()) }}
+            <br>
+            <span id="post{{ post.id }}">{{ post.body }}</span>
+            {% if post.language and post.language != g.locale %}
+            <br><br>
+            <span id="translation{{ post.id }}">
+                <a href="javascript:translate(
+                            '#post{{ post.id }}',
+                            '#translation{{ post.id }}',
+                            '{{ post.language }}',
+                            '{{ g.locale }}');">{{ _('Translate') }}</a>
+            </span>
+            {% endif %}
+            <br><br>
+            <div class="text-right">
+                <div class="btn-group">
+                    <button id="like-btn-{{ post.id }}" type="button" class="btn btn-secondary btn-sm" onclick="likePost('{{ post.id }}', {{post.likes or 0}})" page={{page}}>
+                        <i class="far fa-thumbs-up"></i> Like: <span id="like-count-{{ post.id }}" page={{page}}>{{ post.likes or 0 }}</span>
+                    </button>
+                    <button id="dislike-btn-{{ post.id }}" type="button" class="btn btn-secondary btn-sm" onclick="dislikePost('{{ post.id }}', {{post.dislikes or 0}})" page={{page}}>
+                        <i class="far fa-thumbs-down"></i> Dislike: <span id="dislike-count-{{ post.id }}" page={{page}}>{{ post.dislikes or 0 }}</span>
+                    </button>
+                    <button id="laugh-btn-{{ post.id }}" type="button" class="btn btn-secondary btn-sm" onclick="laughPost('{{ post.id }}', {{post.laughs or 0}})" page={{page}}>
+                        <i class="far fa-thumbs-down"></i> Laugh: <span id="laugh-count-{{ post.id }}" page={{page}}>{{ post.laughs or 0 }}</span>
+                    </button>
+                </div>
+            </div>
+            <script>
+
+                document.addEventListener("DOMContentLoaded", function(event) {
+                    var likeBtn = document.getElementById("like-btn-{{ post.id }}");
+                    var dislikeBtn = document.getElementById("dislike-btn-{{ post.id }}");
+                    var laughBtn = document.getElementById("laugh-btn-{{ post.id }}");
+
+                    {% if current_user.is_authenticated %}
+                        // loop through posts and check if the post was liked by the user
+                        {% if post.liked_by(current_user) %}
+                            likeBtn.classList.remove("btn-secondary");
+                            likeBtn.classList.add("btn-success");
+                        {% endif %}
+                        {% if post.disliked_by(current_user) %}
+                            dislikeBtn.classList.remove("btn-secondary");
+                            dislikeBtn.classList.add("btn-danger");
+                        {% endif %}
+                        {% if post.laughed_by(current_user) %}
+                            laughBtn.classList.remove("btn-secondary");
+                            laughBtn.classList.add("btn-warning");
+                        {% endif %}
+                    {% endif %}
+                });
+
+                function updateLikes(postId, likes, increasing, callback=()=>{}, callbackParams=[]) {
+                    var likeCnt = document.getElementById("like-count-" + postId);
+                    if (!likes) {
+                        likes = parseInt(likeCnt.innerHTML);
+                    }
+                    likeCnt.innerHTML = parseInt(likeCnt.innerHTML) + (increasing ? 1 : -1);
+
+                    // send JSON POST to /updatelikes
+                    request = new XMLHttpRequest();
+                    request.open("POST", "/updatelikes", true);
+                    request.setRequestHeader("Content-Type", "application/json");
+                    request.send(JSON.stringify({
+                        "postId": postId,
+                        "likes": likes,
+                        "increasing": increasing,
+                        "page": parseInt(likeCnt.getAttribute("page"))
+                    }));
+                    // parse response
+                    request.onload = function() {
+                        var data = JSON.parse(this.response);
+                        if (request.status >= 200 && request.status < 400) {
+                            console.log(data);
+                            callback(...callbackParams);
+                        } else {
+                            console.log('error');
+                        }
+                    }
+
+                }
+
+                function updateLaughs(postId, laughs, increasing, callback=()=>{}, callbackParams=[]) {
+                    var laughCnt = document.getElementById("laugh-count-" + postId);
+                    if (!laughs) {
+                        laughs = parseInt(laughCnt.innerHTML);
+                    }
+                    laughCnt.innerHTML = parseInt(laughCnt.innerHTML) + (increasing ? 1 : -1);
+
+                    // send JSON POST to /updatelikes
+                    request = new XMLHttpRequest();
+                    request.open("POST", "/updatelaughs", true);
+                    request.setRequestHeader("Content-Type", "application/json");
+                    request.send(JSON.stringify({
+                        "postId": postId,
+                        "laughs": laughs,
+                        "increasing": increasing,
+                        "page": parseInt(laughCnt.getAttribute("page"))
+                    }));
+                    // parse response
+                    request.onload = function() {
+                        var data = JSON.parse(this.response);
+                        if (request.status >= 200 && request.status < 400) {
+                            console.log(data);
+                            callback(...callbackParams);
+                        } else {
+                            console.log('error');
+                        }
+                    }
+
+                }
+
+
+                function updateDislikes(postId, dislikes, increasing, callback=()=>{}, callbackParams=[]) {
+                    var dislikeCnt = document.getElementById("dislike-count-" + postId);
+                    if (!dislikes) {
+                        dislikes = parseInt(dislikeCnt.innerHTML);
+                    }
+                    dislikeCnt.innerHTML = parseInt(dislikeCnt.innerHTML) + (increasing ? 1 : -1);
+
+                    // send JSON POST to /updatedislikes
+                    request = new XMLHttpRequest();
+                    request.open("POST", "/updatedislikes", true);
+                    request.setRequestHeader("Content-Type", "application/json");
+                    request.send(JSON.stringify({
+                        "postId": postId,
+                        "dislikes": dislikes,
+                        "increasing": increasing,
+                        "page": parseInt(dislikeCnt.getAttribute("page"))
+                    }));
+                    // parse response
+                    request.onload = function() {
+                        var data = JSON.parse(this.response);
+                        if (request.status >= 200 && request.status < 400) {
+                            console.log(data);
+                            callback(...callbackParams);
+                        } else {
+                            console.log('error');
+                        }
+                    }
+
+                }
+
+                function likePost(postId, originalLikes) {
+                    var likeBtn = document.getElementById("like-btn-" + postId);
+                    var dislikeBtn = document.getElementById("dislike-btn-" + postId);
+                    if (likeBtn.classList.contains("btn-secondary")) {
+                        likeBtn.classList.remove("btn-secondary");
+                        likeBtn.classList.add("btn-success");
+                        // add like
+                        updateLikes(postId, originalLikes, true, callback=(postId, originalDislikes, increasing) => {
+                            if (dislikeBtn.classList.contains("btn-danger")) {
+                                dislikeBtn.classList.remove("btn-danger");
+                                dislikeBtn.classList.add("btn-secondary");
+                                // remove dislike
+                                updateDislikes(postId, originalDislikes, increasing);
+                            }
+                        }, callbackParams=[postId, null, false]);
+                    } else {
+                        likeBtn.classList.remove("btn-success");
+                        likeBtn.classList.add("btn-secondary");
+                        // remove like
+                        updateLikes(postId, originalLikes, false);
+                    }
+                }
+
+                function dislikePost(postId, originalDislikes) {
+                    var likeBtn = document.getElementById("like-btn-" + postId);
+                    var dislikeBtn = document.getElementById("dislike-btn-" + postId);
+                    if (dislikeBtn.classList.contains("btn-secondary")) {
+                        dislikeBtn.classList.remove("btn-secondary");
+                        dislikeBtn.classList.add("btn-danger");
+                        // add dislike
+                        updateDislikes(postId, originalDislikes, true, callback=(postId, originalLikes, increasing) => {
+                            if (likeBtn.classList.contains("btn-success")) {
+                                likeBtn.classList.remove("btn-success");
+                                likeBtn.classList.add("btn-secondary");
+                                // remove like
+                                updateLikes(postId, originalLikes, increasing);
+                            }
+                        }, callbackParams=[postId, null, false]);
+                    } else {
+                        dislikeBtn.classList.remove("btn-danger");
+                        dislikeBtn.classList.add("btn-secondary");
+                        // remove dislike
+                        updateDislikes(postId, originalDislikes, false);
+                    }
+                }
+
+                function laughPost(postId, originalLaughs) {
+                    var laughBtn = document.getElementById("laugh-btn-" + postId);
+                    if (laughBtn.classList.contains("btn-secondary")) {
+                        laughBtn.classList.remove("btn-secondary");
+                        laughBtn.classList.add("btn-warning");
+                        // add laugh
+                        updateLaughs(postId, originalLaughs, true);
+                    } else {
+                        laughBtn.classList.remove("btn-warning");
+                        laughBtn.classList.add("btn-secondary");
+                        // remove laugh
+                        updateLaughs(postId, originalLaughs, false);
+                    }
+                }
+
+
+            </script>
+        </td>
+    </tr>
+</table>

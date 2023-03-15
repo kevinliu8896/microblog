@@ -197,7 +197,7 @@ def archive():
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
-    posts = user.posts.order_by(Post.timestamp.desc()).paginate(
+    posts = user.posts.filter(Post.deleted == False).order_by(Post.timestamp.desc()).paginate(
         page=page, per_page=current_app.config['POSTS_PER_PAGE'],
         error_out=False)
     next_url = url_for('main.user', username=user.username,
