@@ -32,3 +32,21 @@ def test_enable_2fa(app_contexts, registeredUser):
         client.post("/login", json={"username": username, "password": password}, follow_redirects=True)
         login_user(user, remember=True)
         assert current_user.is_authenticated == True
+
+def test_disable_2fa(app_contexts, registeredUser):
+    app, app_context = app_contexts
+    user, username, password = registeredUser
+    with app.test_client() as client:
+        client.post("/login", json={"username": username, "password": password}, follow_redirects=True)
+        login_user(user, remember=True)
+        assert current_user.is_authenticated == True
+        
+
+# def test_send_password_reset_email(app_contexts, registeredUser, form):
+#     app, app_context = app_contexts
+#     user, username, password = registeredUser
+#     with app.test_client() as client:
+#         client.post("/login", json={"username": username, "password": password}, follow_redirects=True)
+#         login_user(user, remember=True)
+#         form.validate_on_submit(current_user)
+#         user.set_password(form.password.data)
