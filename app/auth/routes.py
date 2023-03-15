@@ -8,7 +8,13 @@ from app.auth.forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm, LoginAuthentication
 from app.models import User
 from app.auth.email import send_password_reset_email, send_verification_code
+from random import randint
 
+
+def random_with_N_digits(n):
+    range_start = 10**(n-1)
+    range_end = (10**n)-1
+    return randint(range_start, range_end)
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -20,29 +26,34 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash(_('Invalid username or password'))
             return redirect(url_for('auth.login'))
+        code = random_with_N_digits(5)
+        session["code"] = str(code)
+        session["user"] = form.username.data
+        session["remember_me"] = form.remember_me.data
         if user.authentication == True:
-            code = "1234"
-            session["code"] = code 
-            session["user"] = form.username.data
-            session["remember_me"] = form.remember_me.data
             flash(_('Check your email for the verification code'))
             send_verification_code(user, code)
             return redirect(url_for('auth.login_authentication'))
-        login_user(user, remember = session["remember_me"])
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('main.index')
-        return redirect(next_page)  
+        else:
+            login_user(user, remember = session["remember_me"])
+            next_page = request.args.get('next')
+            if not next_page or url_parse(next_page).netloc != '':
+                next_page = url_for('main.index')
+            return redirect(next_page)  
     return render_template('auth/login.html', title=_('Sign In'), form=form)
 
 @bp.route('/manage_authentication', methods=['POST'])
 def manage_authentication():
-    authentication = request.form['authenticate']
+    authentication = request.form['authenticaiton']
     user = User.query.filter_by(username = session["user"] ).first()
-    if authentication == True:
+    if authentication == "yes":
         user.authentication = True
+        db.session.commit()
+        flash(_('You have successfully activated 2 Factor Authentication.\nThe next time you login you will be promped for a code'))
     else:
         user.authentication = False
+        db.session.commit()
+        flash(_('You have successfully deactivated 2 Factor Authentication.\nYou will no longer be prompted for a code when you login'))
     return redirect(url_for('main.index'))
 
 
@@ -53,8 +64,6 @@ def login_authentication():
     form = LoginAuthentication()
     if form.validate_on_submit():
         code = request.form.get('verificationCode')
-        message = "Current Verification Code: " + str(code)
-        flash(message)
         if session["code"] != code:
             flash(_('Invalid username or password'))
             return redirect(url_for('auth.login_authentication'))
