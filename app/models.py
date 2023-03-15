@@ -166,8 +166,8 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
         followed = Post.query.join(
             followers, (followers.c.followed_id == Post.user_id)).filter(
                 followers.c.follower_id == self.id)
-        own = Post.query.filter_by(user_id=self.id)
-        return followed.union(own).order_by(Post.timestamp.desc())
+        own = Post.query.filter_by(user_id=self.id) 
+        return followed.union(own).filter(Post.deleted == False).order_by(Post.timestamp.desc())
 
     #check if this works somehow? followed posts is only used in tests.py for unit testing.
     #def liked_posts(self):
@@ -280,6 +280,7 @@ class Post(SearchableMixin, db.Model):
     likedBy = db.relationship('User', secondary=likedPosts, backref=db.backref('likedPosts', lazy='dynamic'), lazy='dynamic')
     dislikedBy = db.relationship('User', secondary=dislikedPosts, backref=db.backref('dislikedPosts', lazy='dynamic'), lazy='dynamic')
     laughedBy = db.relationship('User', secondary=laughedPosts, backref=db.backref('laughedPosts', lazy='dynamic'), lazy='dynamic')
+    deleted = db.Column(db.Boolean, default = False)
 
     def liked_by(self, user):
         return self.likedBy.filter(likedPosts.c.user_id == user.id).count() > 0

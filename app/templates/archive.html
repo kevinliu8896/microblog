@@ -4,7 +4,7 @@
 {% block app_content %}
     <h1>{{ _('Your Archived Posts') }}</h1>
     {% for post in posts %}
-        {% include '_post.html' %}
+        {% include '_archived_post.html' %}
     {% endfor %}
     <nav aria-label="...">
         <ul class="pager">

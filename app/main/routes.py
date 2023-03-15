@@ -173,7 +173,7 @@ def index():
 @login_required
 def explore():
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+    posts = Post.query.filter(Post.deleted == False).order_by(Post.timestamp.desc()).paginate(
         page=page, per_page=current_app.config['POSTS_PER_PAGE'],
         error_out=False)
     next_url = url_for('main.explore', page=posts.next_num) \
@@ -356,3 +356,26 @@ def notifications():
         'data': n.get_data(),
         'timestamp': n.timestamp
     } for n in notifications])
+    
+@bp.route("/deletepost", methods=['POST'])
+@login_required
+def deletePost():
+    content_type = request.headers['Content-Type']
+    if (content_type == 'application/json'):
+        data = request.get_json()
+        print(data)
+
+        # updating the likes
+        # expecting the data to be in the form:
+        # {
+        #     "postId": postId,
+        # }
+
+        # getting the postId and changing the deleted value
+        postId = data['postId']
+        post = Post.query.filter(Post.id == postId).order_by(Post.timestamp.desc()).first()
+        post.deleted = True
+        db.session.commit()
+        return jsonify(data)
+    else:
+        return jsonify({'error': 'Invalid content type'})
