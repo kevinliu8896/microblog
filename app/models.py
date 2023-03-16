@@ -117,6 +117,9 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
+    liked_posts = db.relationship('Post', secondary=likedPosts,
+                            backref=db.backref('likers', lazy='dynamic'),
+                            lazy='dynamic')
     followed = db.relationship(
         'User', secondary=followers,
         primaryjoin=(followers.c.follower_id == id),
@@ -163,8 +166,14 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
         followed = Post.query.join(
             followers, (followers.c.followed_id == Post.user_id)).filter(
                 followers.c.follower_id == self.id)
-        own = Post.query.filter_by(user_id=self.id)
-        return followed.union(own).order_by(Post.timestamp.desc())
+        own = Post.query.filter_by(user_id=self.id) 
+        return followed.union(own).filter(Post.deleted == False).order_by(Post.timestamp.desc())
+
+    #check if this works somehow? followed posts is only used in tests.py for unit testing.
+    #def liked_posts(self):
+    #    liked = likedPosts.query.order_by(likedPosts.timestamp.desc()).all()
+    #    own = Post.query.filter_by(user_id = self.id)
+    #    return liked.union(own).order_by(Post.timestamp.desc())
 
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode(
@@ -271,6 +280,7 @@ class Post(SearchableMixin, db.Model):
     likedBy = db.relationship('User', secondary=likedPosts, backref=db.backref('likedPosts', lazy='dynamic'), lazy='dynamic')
     dislikedBy = db.relationship('User', secondary=dislikedPosts, backref=db.backref('dislikedPosts', lazy='dynamic'), lazy='dynamic')
     laughedBy = db.relationship('User', secondary=laughedPosts, backref=db.backref('laughedPosts', lazy='dynamic'), lazy='dynamic')
+    deleted = db.Column(db.Boolean, default = False)
 
     def liked_by(self, user):
         return self.likedBy.filter(likedPosts.c.user_id == user.id).count() > 0
