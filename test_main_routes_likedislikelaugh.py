@@ -34,18 +34,6 @@ def post(registeredUser):
     db.session.commit()
     return post
 
-# Creating test on /updatelikes route
-# updatelikes expects:
-# {
-#     "postId": postId,
-#     "increasing": increasing,
-#     "page": page
-# }
-# expect:
-# if increasing:
-#     return jsonify({"likes": post.like_by(current_user)})
-# else:
-#     return jsonify({"likes": post.unlike_by(current_user)})
 def test_likeby_unlikeby(app_contexts, registeredUser, post):
     app, app_context = app_contexts
     user, username, password = registeredUser
