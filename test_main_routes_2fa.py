@@ -45,6 +45,8 @@ def post(registeredUser):
     db.session.commit()
     return post
 
+
+
 def test_login_No_2fa(app_contexts, registeredUser, post):
     app, app_context = app_contexts
     user, username, password = registeredUser
@@ -53,13 +55,52 @@ def test_login_No_2fa(app_contexts, registeredUser, post):
         assert current_user.is_authenticated == False
         assert login_user(user, remember=True) == True
 
+
 def test_login_2fa(app_contexts, registeredUser_2fa_enabled, post):
     app, app_context = app_contexts
     user2, username, password = registeredUser_2fa_enabled
     with app.test_client() as client:
-        client.post("/login", json={"username": username, "password": password}, follow_redirects=True)
-        assert current_user.is_authenticated == False
+        response = client.post("/auth/login", data={"username": username, "password": password}, follow_redirects=True)
+        assert response.status_code == 200
         assert user2.authentication == True
-        assert login_user(user2, remember=True) == True
-        response = client.post("/login_authentication", json={"verificationCode": "Dn$HE$y7PEzUnjZ"}, follow_redirects=True)
-        assert response.headers['location'].endswith(url_for('auth.login_authentication'))
+
+        # Submitting an incorrect verification code
+        response = client.post("/auth/login_authentication", data={"verificationCode": "DnV$HE$y7PEzUnjZ"}, follow_redirects=True)
+        assert response.status_code == 200
+
+        # Checking if the correct text is present in the response, indicating that the authentication page is displayed
+        assert "Home" in response.get_data(as_text=True)
+
+
+def test_login_2fa_wrong_code(app_contexts, registeredUser_2fa_enabled, post):
+    app, app_context = app_contexts
+    user2, username, password = registeredUser_2fa_enabled
+    with app.test_client() as client:
+        response = client.post("/auth/login", data={"username": username, "password": password}, follow_redirects=True)
+        assert response.status_code == 200
+        assert user2.authentication == True
+
+        # Submitting an incorrect verification code
+        response = client.post("/auth/login_authentication", data={"verificationCode": "WrongCode"}, follow_redirects=True)
+        assert response.status_code == 200
+
+        # Checking if the correct text is present in the response, indicating that the authentication page is displayed
+        assert "Verify" in response.get_data(as_text=True)
+
+# testing that once the dabase value for 2 factor aultentication is set to true, the database value is set to true
+def test_2fa_enabled(app_contexts, registeredUser_2fa_enabled, post):
+    app, app_context = app_contexts
+    user2, username, password = registeredUser_2fa_enabled
+    with app.test_client() as client:
+        response = client.post("/auth/login", data={"username": username, "password": password}, follow_redirects=True)
+        assert response.status_code == 200
+        assert user2.authentication == True
+        
+# testing that once the dabase value for 2 factor aultentication is set to false, the database value is set to false
+def test_2fa_disabled(app_contexts, registeredUser, post):
+    app, app_context = app_contexts
+    user, username, password = registeredUser
+    with app.test_client() as client:
+        response = client.post("/auth/login", data={"username": username, "password": password}, follow_redirects=True)
+        assert response.status_code == 200
+        assert user.authentication == False
