@@ -19,7 +19,7 @@ class TestArchiveposttest():
     self.driver.quit()
   
   def test_1creatnewusertest(self):
-    self.driver.get("http://127.0.0.1:5000/auth/login?next=%2F")
+    self.driver.get("http://127.0.0.1:5001/auth/login?next=%2F")
     self.driver.set_window_size(989, 805)
     self.driver.find_element(By.ID, "username").click()
     self.driver.find_element(By.ID, "username").click()
@@ -37,7 +37,7 @@ class TestArchiveposttest():
     self.driver.close()
   
   def test_2createposttest(self):
-    self.driver.get("http://127.0.0.1:5000/auth/login?next=%2F")
+    self.driver.get("http://127.0.0.1:5001/auth/login?next=%2F")
     self.driver.set_window_size(989, 805)
     self.driver.find_element(By.CSS_SELECTOR, ".form-group:nth-child(2)").click()
     self.driver.find_element(By.ID, "username").click()
@@ -52,7 +52,7 @@ class TestArchiveposttest():
     self.driver.close()
   
   def test_3deleteposttest(self):
-    self.driver.get("http://127.0.0.1:5000/auth/login?next=%2F")
+    self.driver.get("http://127.0.0.1:5001/auth/login?next=%2F")
     self.driver.set_window_size(989, 805)
     self.driver.find_element(By.ID, "username").click()
     self.driver.find_element(By.ID, "username").send_keys("kareem14")
@@ -64,7 +64,7 @@ class TestArchiveposttest():
     self.driver.close()
   
   def test_4archivingposttest(self):
-    self.driver.get("http://127.0.0.1:5000/auth/login?next=%2F")
+    self.driver.get("http://127.0.0.1:5001/auth/login?next=%2F")
     self.driver.set_window_size(989, 805)
     self.driver.find_element(By.ID, "username").click()
     self.driver.find_element(By.ID, "username").send_keys("kareem14")

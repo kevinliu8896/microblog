@@ -117,10 +117,10 @@ class User(UserMixin, PaginatedAPIMixin, db.Model):
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     token = db.Column(db.String(32), index=True, unique=True)
     token_expiration = db.Column(db.DateTime)
-    authentication = db.Column(db.Boolean, default=False)
     liked_posts = db.relationship('Post', secondary=likedPosts,
                             backref=db.backref('likers', lazy='dynamic'),
                             lazy='dynamic')
+    authentication = db.Column(db.Boolean, default=False)
     followed = db.relationship(
         'User', secondary=followers,
         primaryjoin=(followers.c.follower_id == id),
