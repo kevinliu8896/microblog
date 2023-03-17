@@ -28,12 +28,6 @@
             </span>
             {% endif %}
             <br><br>
-            {% if current_user.is_authenticated and post.author == current_user %}
-            <button id="delete-btn-{{ post.id }}" type="button" class="btn btn-danger btn-sm" onclick="deletePost('{{ post.id }}')">
-                {{ _('Delete') }}
-            </button>
-            {% endif %}
-            <br><br>
             <div class="text-right">
                 <div class="btn-group">
                     <button id="like-btn-{{ post.id }}" type="button" class="btn btn-secondary btn-sm" onclick="likePost('{{ post.id }}', {{post.likes or 0}})" page={{page}}>
@@ -53,7 +47,6 @@
                     var likeBtn = document.getElementById("like-btn-{{ post.id }}");
                     var dislikeBtn = document.getElementById("dislike-btn-{{ post.id }}");
                     var laughBtn = document.getElementById("laugh-btn-{{ post.id }}");
-                    var deleteBtn = document.getElementById("delete-btn-{{ post.id }}")
 
                     {% if current_user.is_authenticated %}
                         // loop through posts and check if the post was liked by the user
@@ -224,28 +217,6 @@
                     }
                 }
 
-
-                function deletePost(postId,callback=()=>{}, callbackParams=[]) {
-                    var likeCnt = document.getElementById("like-count-" + postId);
-                    // send JSON POST to /updatelikes
-                    request = new XMLHttpRequest();
-                    request.open("POST", "/deletepost", true);
-                    request.setRequestHeader("Content-Type", "application/json");
-                    request.send(JSON.stringify({
-                        "postId": postId,
-                    }));
-                    // parse response
-                    request.onload = function() {
-                        var data = JSON.parse(this.response);
-                        if (request.status >= 200 && request.status < 400) {
-                            console.log(data);
-                            callback(...callbackParams);
-                        } else {
-                            console.log('error');
-                        }
-                    }
-                    location.reload()
-                }
 
             </script>
         </td>
