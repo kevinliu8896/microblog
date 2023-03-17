@@ -31,7 +31,7 @@ class TestLikeDislikeLaughButtonTests():
   
   
   def test_1CreateUserTest(self):
-    self.driver.get("http://127.0.0.1:5000/auth/login?next=%2F")
+    self.driver.get("http://127.0.0.1:5001/auth/login?next=%2F")
     self.driver.set_window_size(1205, 1077)
     self.driver.find_element(By.ID, "username").send_keys("admin-user")
     self.driver.find_element(By.ID, "password").send_keys("ABC123")
@@ -48,14 +48,14 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.find_element(By.ID, "submit").click()
   
   def test_2MakePostTest(self):
-    self.driver.get("http://127.0.0.1:5000/")
+    self.driver.get("http://127.0.0.1:5001/")
     self.driver.set_window_size(1205, 1077)
     self.driver.find_element(By.ID, "post").click()
     self.driver.find_element(By.ID, "post").send_keys("Hello from Selenium Webdriver!")
     self.driver.find_element(By.ID, "submit").click()
   
   def test_3LikePostTest(self):
-    self.driver.get("http://127.0.0.1:5000/")
+    self.driver.get("http://127.0.0.1:5001/")
     self.driver.set_window_size(1205, 1077)
     self.driver.find_element(By.ID, "like-btn-1").click()
     self.driver.find_element(By.ID, "like-btn-1").click()
@@ -68,7 +68,7 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.find_element(By.ID, "like-btn-1").click()
   
   def test_4DislikePostTest(self):
-    self.driver.get("http://127.0.0.1:5000/")
+    self.driver.get("http://127.0.0.1:5001/")
     self.driver.set_window_size(1205, 1077)
     self.driver.find_element(By.ID, "dislike-btn-1").click()
     self.driver.find_element(By.ID, "dislike-btn-1").click()
@@ -81,7 +81,7 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.find_element(By.ID, "dislike-btn-1").click()
   
   def test_5LaughPostTest(self):
-    self.driver.get("http://127.0.0.1:5000/")
+    self.driver.get("http://127.0.0.1:5001/")
     self.driver.set_window_size(1205, 1077)
     self.driver.find_element(By.ID, "laugh-btn-1").click()
     self.driver.find_element(By.ID, "laugh-btn-1").click()
@@ -96,7 +96,7 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.find_element(By.ID, "laugh-btn-1").click()
   
   def test_6LikeDislikeButtonsTest(self):
-    self.driver.get("http://127.0.0.1:5000/")
+    self.driver.get("http://127.0.0.1:5001/")
     self.driver.set_window_size(1205, 1077)
     self.driver.find_element(By.ID, "like-btn-1").click()
     self.driver.find_element(By.ID, "dislike-btn-1").click()
@@ -123,7 +123,7 @@ class TestLikeDislikeLaughButtonTests():
     self.driver.find_element(By.ID, "like-btn-1").click()
   
   def test_7PagenationTest(self):
-    self.driver.get("http://127.0.0.1:5000/")
+    self.driver.get("http://127.0.0.1:5001/")
     self.driver.set_window_size(1205, 1077)
     self.driver.find_element(By.ID, "post").click()
     self.driver.find_element(By.CSS_SELECTOR, "html").click()

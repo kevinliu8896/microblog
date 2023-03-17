@@ -19,7 +19,7 @@ class Test2FATest():
     self.driver.quit()
   
   def test_1RegisterUserTest(self):
-    self.driver.get("http://127.0.0.1:5000/auth/login?next=%2F")
+    self.driver.get("http://127.0.0.1:5001/auth/login?next=%2F")
     self.driver.set_window_size(1936, 1048)
     self.driver.find_element(By.LINK_TEXT, "Click to Register!").click()
     self.driver.find_element(By.ID, "username").click()
@@ -34,7 +34,7 @@ class Test2FATest():
     self.driver.close()
   
   def test_2LoginTest(self):
-    self.driver.get("http://127.0.0.1:5000/auth/login?next=%2F")
+    self.driver.get("http://127.0.0.1:5001/auth/login?next=%2F")
     self.driver.set_window_size(1219, 720)
     self.driver.find_element(By.ID, "username").click()
     self.driver.find_element(By.ID, "username").send_keys("dackuaku")
@@ -43,7 +43,7 @@ class Test2FATest():
     self.driver.close()
   
   def test_3Enable2FATest(self):
-    self.driver.get("http://127.0.0.1:5000/auth/login?next=%2F")
+    self.driver.get("http://127.0.0.1:5001/auth/login?next=%2F")
     self.driver.set_window_size(945, 1012)
     self.driver.find_element(By.ID, "username").click()
     self.driver.find_element(By.ID, "username").send_keys("dackuaku")
@@ -57,7 +57,7 @@ class Test2FATest():
     self.driver.close()
   
   def test_42FALoginTest(self):
-    self.driver.get("http://127.0.0.1:5000/auth/login?next=%2F")
+    self.driver.get("http://127.0.0.1:5001/auth/login?next=%2F")
     self.driver.set_window_size(945, 1012)
     self.driver.find_element(By.ID, "username").click()
     self.driver.find_element(By.ID, "username").send_keys("dackuaku")
@@ -70,7 +70,7 @@ class Test2FATest():
     self.driver.close()
   
   def test_52FAInvalidCodeTest(self):
-    self.driver.get("http://127.0.0.1:5000/auth/login?next=%2F")
+    self.driver.get("http://127.0.0.1:5001/auth/login?next=%2F")
     self.driver.set_window_size(945, 1012)
     self.driver.find_element(By.ID, "username").click()
     self.driver.find_element(By.ID, "username").send_keys("dackuaku")
@@ -82,7 +82,7 @@ class Test2FATest():
     self.driver.close()
   
   def test_6Disable2FATest(self):
-    self.driver.get("http://127.0.0.1:5000/auth/login?next=%2F")
+    self.driver.get("http://127.0.0.1:5001/auth/login?next=%2F")
     self.driver.set_window_size(945, 1012)
     self.driver.find_element(By.ID, "username").click()
     self.driver.find_element(By.ID, "username").send_keys("dackuaku")

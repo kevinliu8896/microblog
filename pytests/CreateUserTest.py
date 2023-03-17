@@ -28,7 +28,7 @@ class TestCreateUserTest():
   def teardown_method(self, method):
     self.driver.quit()
   def test_1CreateUserTest(self):
-    self.driver.get("http://127.0.0.1:5000/auth/login?next=%2F")
+    self.driver.get("http://127.0.0.1:5001/auth/login?next=%2F")
     self.driver.set_window_size(1205, 1077)
     self.driver.find_element(By.ID, "username").send_keys("admin-user")
     self.driver.find_element(By.ID, "password").send_keys("ABC123")
