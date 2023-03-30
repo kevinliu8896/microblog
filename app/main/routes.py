@@ -52,13 +52,13 @@ def updateLikes():
             # check if current user has already liked the post
             # and if so make sure the new likes is less than the old likes
             if increasing:
-                return jsonify({"likes": post.like_by(current_user)})
+                return jsonify({"likes": post.like_by(current_user)}), 200
             else:
-                return jsonify({"likes": post.unlike_by(current_user)})
+                return jsonify({"likes": post.unlike_by(current_user)}), 200
 
         return jsonify(data)
     else:
-        return jsonify({'error': 'Invalid content type'})
+        return jsonify({'error': 'Invalid content type'}), 400
 
 @bp.route('/updatedislikes', methods=['POST'])
 @login_required
@@ -98,7 +98,7 @@ def updateDislikes():
 
         return jsonify(data)
     else:
-        return jsonify({'error': 'Invalid content type'})
+        return jsonify({'error': 'Invalid content type'}), 400
 
 # update laughs
 @bp.route('/updatelaughs', methods=['POST'])
@@ -138,7 +138,21 @@ def updateLaughs():
 
         return jsonify(data)
     else:
-        return jsonify({'error': 'Invalid content type'})
+        return jsonify({'error': 'Invalid content type'}), 400
+
+@bp.route('/index-api', methods=['POST'])
+@login_required
+def index_api():
+    data = request.get_json()
+
+    if data and 'post' in data:
+        try: language = detect(data['post'])
+        except LangDetectException: language = ''
+        post = Post(body=data['post'], author=current_user, language=language)
+        db.session.add(post)
+        db.session.commit()
+        return jsonify({'message': 'Post created successfully'})
+    return jsonify({'error': 'Invalid content type'}), 400
 
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
@@ -191,6 +205,14 @@ def archive():
     user = current_user
     posts = user.liked_posts.all()
     return render_template('archive.html', posts=posts)
+
+@bp.route('/archive-api', methods=['GET'])
+@login_required
+def archive_api():
+    user = current_user
+    posts = user.liked_posts.all()
+    post_data = [{'id': post.id, 'body': post.body, 'timestamp': post.timestamp, 'author': post.author.username} for post in posts]
+    return jsonify(post_data)
 
 @bp.route('/user/<username>')
 @login_required
@@ -378,4 +400,31 @@ def deletePost():
         db.session.commit()
         return jsonify(data)
     else:
-        return jsonify({'error': 'Invalid content type'})
+        return jsonify({'error': 'Invalid content type'}), 400
+    
+
+@bp.route('/create-like-post-api', methods=['POST'])
+@login_required
+def create_like_post_api():
+    data = request.get_json()
+
+    if data and 'body' in data:
+        try:
+            language = detect(data['body'])
+        except LangDetectException:
+            language = ''
+        post = Post(body=data['body'], author=current_user, language=language)
+        db.session.add(post)
+        db.session.commit()
+
+        post.like_by(current_user)
+        db.session.commit()
+
+        user = current_user
+        archived_posts = user.liked_posts.all()
+        is_post_in_archive = any(archived_post.id == post.id for archived_post in archived_posts)
+
+        return jsonify({'message': 'Post created and liked successfully', 'is_in_archive': is_post_in_archive})
+    else:
+        return jsonify({'error': 'Invalid content type'}), 400
+    

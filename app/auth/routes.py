@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, session, flash, request
+from flask import render_template, redirect, url_for, session, flash, request, jsonify,session
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_babel import _
@@ -15,6 +15,24 @@ def random_with_N_digits(n):
     range_start = 10**(n-1)
     range_end = (10**n)-1
     return randint(range_start, range_end)
+
+@bp.route('/login-api', methods=['POST'])
+def login_api():
+    if current_user.is_authenticated:
+        return jsonify({'message': 'Althenticated'}), 200
+
+    data = request.get_json() or {}
+    username = data.get("username")
+    password = data.get("password")
+    if not username or not password:
+        return jsonify({'message': 'Field left blank.'}), 400
+
+    user = User.query.filter_by(username=username).first()
+    if not user or not user.check_password(password):
+        return jsonify({'message': 'Invalid password'}), 401
+
+    login_user(user, remember=True, force=True, fresh=False)
+    return jsonify({'message': 'Logged In Sucessfully.', 'session': session['_id']}), 200
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -57,6 +75,25 @@ def manage_authentication():
     return redirect(url_for('main.index'))
 
 
+@bp.route('/manage_authentication_api', methods=['POST'])
+def manage_authentication_api():
+    data = request.get_json()
+
+    if data and 'authentication' in data:
+        authentication = data['authentication']
+        user = current_user
+        if authentication == "yes":
+            user.authentication = True
+            db.session.commit()
+            return jsonify({'message': '2FA activated successfully'})
+        else:
+            user.authentication = False
+            db.session.commit()
+            return jsonify({'message': '2FA deactivated successfully'})
+    else:
+        return jsonify({'error': 'Invalid content type'}), 400
+
+
 @bp.route('/login_authentication', methods=['GET', 'POST'])
 def login_authentication():
     if current_user.is_authenticated:
@@ -87,16 +124,21 @@ def logout():
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
+
     form = RegistrationForm()
-    if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
-        user.set_password(form.password.data)
+    if request.method == 'POST' or form.validate_on_submit():
+        username, email, password = request.form.get('username'), request.form.get('email'), request.form.get('password')
+        user = User(username=username or form.username.data, email=email or form.email.data)
+        user.set_password(password or form.password.data)
+
         db.session.add(user)
         db.session.commit()
         flash(_('Congratulations, you are now a registered user!'))
         return redirect(url_for('auth.login'))
-    return render_template('auth/register.html', title=_('Register'),
-                           form=form)
+
+    return render_template('auth/register.html', title=_('Register'), form=form)
+
+
 
 
 @bp.route('/reset_password_request', methods=['GET', 'POST'])
