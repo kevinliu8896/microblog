@@ -1,4 +1,4 @@
-from locust import HttpUser, between, task
+from locustfile import HttpUser, between, task
 import random, string, requests
 
 rand_usr = lambda l: ''.join(random.choices(string.ascii_letters, k=l))
