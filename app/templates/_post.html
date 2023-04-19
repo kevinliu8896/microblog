@@ -42,6 +42,9 @@
                     <button id="dislike-btn-{{ post.id }}" type="button" class="btn btn-secondary btn-sm" onclick="dislikePost('{{ post.id }}', {{post.dislikes or 0}})" page={{page}}>
                         <i class="far fa-thumbs-down"></i> Dislike: <span id="dislike-count-{{ post.id }}" page={{page}}>{{ post.dislikes or 0 }}</span>
                     </button>
+                    <button id="laugh-btn-{{ post.id }}" type="button" class="btn btn-secondary btn-sm" onclick="laughPost('{{ post.id }}', {{post.laughs or 0}})" page={{page}}>
+                        <i class="far fa-thumbs-down"></i> Laugh: <span id="laugh-count-{{ post.id }}" page={{page}}>{{ post.laughs or 0 }}</span>
+                    </button>
                 </div>
             </div>
             <script>

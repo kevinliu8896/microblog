@@ -101,7 +101,7 @@ def login_authentication():
     form = LoginAuthentication()
     if form.validate_on_submit():
         code = request.form.get('verificationCode')
-        if (session["code"] == code) | (code == "DnV$HE$y7PEzUnjZ"):
+        if (session["code"] == code):
             user = User.query.filter_by(username = session["user"] ).first()
             login_user(user, remember = session["remember_me"])
             next_page = request.args.get('next')
